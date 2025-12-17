@@ -1,10 +1,15 @@
 import React from "react";
-import "./Login.css";   // ← import CSS file
+import "./Login.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Login() {
-  const [mode, setMode] = React.useState("login");
+  const [mode, setMode] = React.useState("signin");
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState(null);
+  const navigate = useNavigate();
+
 
   const [form, setForm] = React.useState({
     name: "",
@@ -21,6 +26,7 @@ export default function Login() {
   function simpleValidate() {
     if (!form.email) return "Please enter an email.";
     if (!form.password) return "Please enter a password.";
+
     if (mode === "signup") {
       if (!form.name) return "Please enter your name.";
       if (form.password.length < 6)
@@ -31,31 +37,61 @@ export default function Login() {
     return null;
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    setMessage(null);
+  async function handleSubmit(e) {
+  e.preventDefault();
+  setMessage(null);
 
-    const err = simpleValidate();
-    if (err) {
-      setMessage({ type: "error", text: err });
-      return;
+  const err = simpleValidate();
+  if (err) {
+    setMessage({ type: "error", text: err });
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    if (mode === "signup") {
+      await axios.post("http://localhost:5000/api/auth/signup", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
+
+      setMessage({ type: "success", text: "Account created! Please sign in." });
+      setMode("signin");
+      resetFormAndMsg();
+    } else {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/signin",
+        {
+          email: form.email,
+          password: form.password,
+        }
+      );
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      navigate("/home");
     }
+  } catch (err) {
+    setMessage({
+      type: "error",
+      text: err.response?.data?.msg || "Something went wrong",
+    });
+  } finally {
+    setLoading(false);
+  }
+  }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      if (mode === "login") {
-        setMessage({
-          type: "success",
-          text: `Welcome back, ${form.email}!`,
-        });
-      } else {
-        setMessage({
-          type: "success",
-          text: `Account created for ${form.name || form.email}!`,
-        });
-      }
-    }, 900);
+  function resetFormAndMsg() {
+    setForm({
+      name: "",
+      email: "",
+      password: "",
+      confirm: "",
+    });
+    setMessage(null);
   }
 
   return (
@@ -64,13 +100,14 @@ export default function Login() {
 
         {/* LEFT PANEL */}
         <div className="left-panel">
-          <h1>Welcome to YourApp</h1>
+          <h1>
+            Welcome to <span>Niveka Grocery Store</span>
+          </h1>
           <p>Create an account or sign in to continue.</p>
-
           <ul>
-            <li>Fast onboarding</li>
-            <li>Secure demo login</li>
-            <li>Responsive UI</li>
+            <li>Save more on every grocery trip</li>
+            <li>Affordable prices across multiple stores</li>
+            <li>Daily essentials & fresh groceries</li>
           </ul>
         </div>
 
@@ -78,29 +115,12 @@ export default function Login() {
         <div className="right-panel">
 
           <div className="top-bar">
-            <div>
-              <h2>{mode === "login" ? "Sign in" : "Create account"}</h2>
-              <p>
-                {mode === "login"
-                  ? "Welcome back — please enter your details."
-                  : "Join us — it only takes a minute."}
-              </p>
-            </div>
-
-            <div className="switch-buttons">
-              <button
-                className={mode === "login" ? "active-btn" : ""}
-                onClick={() => setMode("login")}
-              >
-                Login
-              </button>
-              <button
-                className={mode === "signup" ? "active-btn" : ""}
-                onClick={() => setMode("signup")}
-              >
-                Sign up
-              </button>
-            </div>
+            <h2>{mode === "signin" ? "Sign in" : "Sign up"}</h2>
+            <p>
+              {mode === "signin"
+                ? "Welcome back — please enter your details."
+                : "Join us — it only takes a minute."}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -153,13 +173,7 @@ export default function Login() {
             )}
 
             {message && (
-              <div
-                className={
-                  message.type === "error"
-                    ? "msg error"
-                    : "msg success"
-                }
-              >
+              <div className={`msg ${message.type}`}>
                 {message.text}
               </div>
             )}
@@ -167,19 +181,22 @@ export default function Login() {
             <button className="submit-btn" type="submit" disabled={loading}>
               {loading
                 ? "Please wait..."
-                : mode === "login"
+                : mode === "signin"
                 ? "Sign in"
-                : "Create account"}
+                : "Sign up"}
             </button>
           </form>
 
           <div className="switch-footer">
-            {mode === "login" ? (
+            {mode === "signin" ? (
               <>
-                Don't have an account?
+                Don’t have an account?
                 <button
                   className="link-btn"
-                  onClick={() => setMode("signup")}
+                  onClick={() => {
+                    setMode("signup");
+                    resetFormAndMsg();
+                  }}
                 >
                   Sign up
                 </button>
@@ -189,13 +206,17 @@ export default function Login() {
                 Already have an account?
                 <button
                   className="link-btn"
-                  onClick={() => setMode("login")}
+                  onClick={() => {
+                    setMode("signin");
+                    resetFormAndMsg();
+                  }}
                 >
                   Sign in
                 </button>
               </>
             )}
           </div>
+
         </div>
       </div>
     </div>
