@@ -36,6 +36,7 @@ export default function Login() {
         return "Passwords do not match.";
     }
     return null;
+    
   }
 
   async function handleSubmit(e) {
