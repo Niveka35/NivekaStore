@@ -2,28 +2,20 @@ import React from "react";
 import "../pages/Home.css";
 import { useEffect, useState, useRef, useContext } from "react";
 import { CartContext } from "../context/CartContext";
-import PlaceOrder from "./PlaceOrder";
+import { useNavigate } from "react-router-dom";
 const Header = () => {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const menuRef = useRef(null);
   const aboutRef = useRef(null);
   const cartRef = useRef(null);
-  const { cartItems, updateQty, total, clearCart } = useContext(CartContext);
+  const { cartItems} = useContext(CartContext);
 
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
-  };
-  const handleIncrease = (id) => {
-    const item = cartItems.find((i) => i._id === id);
-    updateQty(id, item.qty + 1);
-  };
-
-  const handleDecrease = (id) => {
-    const item = cartItems.find((i) => i._id === id);
-    updateQty(id, item.qty - 1);
   };
 
   useEffect(() => {
@@ -85,7 +77,7 @@ const Header = () => {
         </span>
       </div>
       <div className="header-right">
-        <span className="icon basket-container" onClick={toggleCart}>
+        <span className="icon basket-container" onClick={() => navigate("/cart")}>
           🛒
           {cartItems.length > 0 && (
             <span className="badge">{cartItems.length}</span>
@@ -145,49 +137,6 @@ const Header = () => {
               Close
             </button>
           </div>
-        </div>
-      )}
-
-      {cartOpen && (
-        <div className="cart-dropdown" ref={cartRef}>
-          <h3>Ready to Order</h3>
-          {cartItems.length === 0 ? (
-            <p>Cart is empty</p>
-          ) : (
-            <div className="cart-items">
-              {cartItems.map((item) => (
-                <div className="cart-item" key={item._id}>
-                  <span>{item.name}</span>
-                  <div className="cart-qty">
-                    <button onClick={() => handleDecrease(item._id)}>−</button>
-                    <span>{item.qty}</span>
-                    <button onClick={() => handleIncrease(item._id)}>+</button>
-                  </div>
-                  <span class="price">Rs. {item.price * item.qty}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="cart-total">
-            <strong>Total:</strong> Rs. {total}
-          </div>
-          <PlaceOrder
-            cartItems={cartItems}
-            total={total}
-            onClose={() => setCartOpen(false)}
-          />{" "}
-          <button
-            className="clear-btn"
-            onClick={() => {
-              clearCart();
-              setCartOpen(false);
-            }}
-          >
-            Clear Cart
-          </button>
-          <button className="close-btn" onClick={() => setCartOpen(false)}>
-            Close
-          </button>
         </div>
       )}
     </header>
