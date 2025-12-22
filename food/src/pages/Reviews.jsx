@@ -10,25 +10,23 @@ export default function Reviews() {
     comment: "",
   });
 
-  // Fetch reviews from backend
   useEffect(() => {
     axios.get("http://localhost:5000/reviews")
       .then(res => setReviews(res.data))
       .catch(err => console.error(err));
   }, []);
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submit
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:5000/reviews", formData);
-      setReviews([res.data, ...reviews]); // show new review immediately
-      setFormData({ name: "", rating: "", comment: "" }); // reset form
+      setReviews([res.data, ...reviews]); 
+      setFormData({ name: "", rating: "", comment: "" }); 
     } catch (err) {
       console.error(err);
     }
@@ -37,8 +35,6 @@ export default function Reviews() {
   return (
     <section className="section reviews" id="reviews">
       <h2>Write a review&#128395;</h2>
-
-      {/* Review Form */}
       <form className="review-form" onSubmit={handleSubmit}>
         <input
           type="text"
@@ -67,8 +63,6 @@ export default function Reviews() {
         ></textarea>
         <button type="submit" >Submit Review</button>
       </form>
-
-      {/* Display Reviews */}
       <div className="review-grid">
         {reviews.map((review) => (
           <div className="review-card" key={review._id}>
