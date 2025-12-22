@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Review = require("../models/Review"); // Mongo model
+const Review = require("../models/Review");
 
-// GET all reviews
 router.get("/", async (req, res) => {
   try {
     const reviews = await Review.find().sort({ _id: -1 });
@@ -12,7 +11,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST a new review
 router.post("/", async (req, res) => {
   const { name, rating, comment } = req.body;
   const review = new Review({ name, rating, comment });

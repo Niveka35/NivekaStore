@@ -6,18 +6,18 @@ const OrderSchema = new mongoose.Schema({
       name: String,
       price: Number,
       qty: Number,
-    }
+    },
   ],
   total: Number,
   paymentMethod: {
     type: String,
     default: "Cash on Pickup",
   },
-  email: String, // customer email
+  email: String,
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

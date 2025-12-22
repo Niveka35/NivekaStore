@@ -5,7 +5,6 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-/* SIGN UP */
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -29,31 +28,26 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-/* SIGN IN */
 router.post("/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user)
-      return res.status(400).json({ msg: "Invalid credentials" });
+    if (!user) return res.status(400).json({ msg: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ msg: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.json({
       token,
       user: {
         name: user.name,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   } catch (err) {
     res.status(500).json({ msg: "Server error" });
