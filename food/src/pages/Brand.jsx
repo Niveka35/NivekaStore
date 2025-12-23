@@ -6,6 +6,7 @@ import { CartContext } from "../context/CartContext";
 
 const Brand = () => {
   const { brandName } = useParams(); 
+  const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   const { cartItems, updateQty, addToCart } = useContext(CartContext);
  const handleDecrease = (item) => {
@@ -16,17 +17,26 @@ const Brand = () => {
     }
   };
   useEffect(() => {
+    setLoading(true); 
     axios
       .get(`https://nivekastore.onrender.com/items?brand=${brandName}`)
-      .then((res) => setItems(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setItems(res.data);
+        setLoading(false); 
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false); 
+      });
   }, [brandName]);
 
   return (
     <div className="brand-page">
     <h1>Brand-{brandName}</h1>
       <div className="item-grid">
-        {items.length === 0 ? (
+        {loading ? (
+          <p className="no">Loading items...</p> 
+        ) : items.length === 0 ? (
           <p class="no">No items found in this category.</p>
         ) : (
           items.map((item) => {
