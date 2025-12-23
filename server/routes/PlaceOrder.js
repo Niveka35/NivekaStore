@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
       .map((i) => `${i.name} x ${i.qty} = Rs.${i.total}`)
       .join("\n");
     const body = {
-      sender: { email: process.env.EMAIL_USER },  // Your verified Brevo email
+      sender: { email:"k.niveka03@gmail.com",name:"Niveka Store"},  // Your verified Brevo email
       to: [{ email: email }],
       subject: "Order Confirmation - Niveka Store",
       textContent: `Thank you for your order!\n\nItems:\n${itemList}\n\nTotal: Rs.${total}\n\nPickup at the store.`,
