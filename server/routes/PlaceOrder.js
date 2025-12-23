@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const fetch = require("node-fetch"); 
+const axios = require("axios");
 
 router.post("/", async (req, res) => {
   const { email, items, total } = req.body;
@@ -22,16 +22,14 @@ router.post("/", async (req, res) => {
                     <p>Pickup at the store.</p>`,
     };
 
-    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
+    const response = await axios.post("https://api.brevo.com/v3/smtp/email", 
+      body,{
       headers: {
         "Content-Type": "application/json",
         "api-key": process.env.EMAIL_PASS, 
       },
-      body: JSON.stringify(body),
     });
 
-    const data = await response.json();
 
     if (response.ok) {
       res.status(200).json({ message: "Order placed and email sent", data });
