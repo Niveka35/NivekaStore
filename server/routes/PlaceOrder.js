@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
       .map((i) => `${i.name} x ${i.qty} = Rs.${i.total}`)
       .join("\n");
     const body = {
-      sender: { email:"k.niveka03@gmail.com",name:"Niveka Store"},  // Your verified Brevo email
+      sender: { email:"k.niveka03@gmail.com",name:"Niveka Store"},  
       to: [{ email: email }],
       subject: "Order Confirmation - Niveka Store",
       textContent: `Thank you for your order!\n\nItems:\n${itemList}\n\nTotal: Rs.${total}\n\nPickup at the store.`,
@@ -31,15 +31,19 @@ router.post("/", async (req, res) => {
     });
 
 
-    if (response.status === 200 || response.status === 201) {
-      res.status(200).json({ message: "Order placed and email sent", data: response.data });
-    } else {
-      console.error("Brevo API error:", response.data);
-      res.status(500).json({ message: "Error sending email", error: response.data });
-    }
+    return res.status(200).json({
+      message: "Order placed and email sent",
+      data: response.data
+    });
+
   } catch (err) {
     console.error("Email sending error:", err.response?.data || err.message);
-    res.status(500).json({ message: "Error sending email" });
+
+  
+    return res.status(500).json({
+      message: "Error sending email",
+      error: err.response?.data || err.message
+    });
   }
 });
 
