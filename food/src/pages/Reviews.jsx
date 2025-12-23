@@ -11,7 +11,7 @@ export default function Reviews() {
   });
 
   useEffect(() => {
-    axios.get("http://localhost:5000/reviews")
+    axios.get("https://nivekastore.onrender.com/reviews")
       .then(res => setReviews(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -24,7 +24,7 @@ export default function Reviews() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/reviews", formData);
+      const res = await axios.post("https://nivekastore.onrender.com/reviews", formData);
       setReviews([res.data, ...reviews]); 
       setFormData({ name: "", rating: "", comment: "" }); 
     } catch (err) {

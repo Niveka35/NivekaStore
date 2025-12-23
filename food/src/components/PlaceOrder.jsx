@@ -15,7 +15,7 @@ const PlaceOrder = ({ cartItems, total, onClose }) => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/place-order", {
+      await axios.post("https://nivekastore.onrender.com/api/place-order", {
         email: user.email,
         items: cartItems.map((item) => ({
           name: item.name,

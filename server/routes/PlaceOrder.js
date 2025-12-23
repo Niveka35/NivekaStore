@@ -9,8 +9,8 @@ router.post("/", async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "k.niveka03@gmail.com",
-        pass: "cxqs royz jegt zsio",
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
       .join("\n");
 
     const mailOptions = {
-      from: "k.niveka03@gmail.com",
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Order Confirmation - Niveka Store",
       text: `Thank you for your order!\n\nItems:\n${itemList}\n\nTotal: Rs.${total}\n\nPickup at the store.`,

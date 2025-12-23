@@ -17,7 +17,7 @@ const Brand = () => {
   };
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/items?brand=${brandName}`)
+      .get(`https://nivekastore.onrender.com/items?brand=${brandName}`)
       .then((res) => setItems(res.data))
       .catch((err) => console.log(err));
   }, [brandName]);

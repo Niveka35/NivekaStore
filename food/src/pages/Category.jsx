@@ -18,7 +18,7 @@ export default function CategoryPage() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/items?category=${name}`)
+      .get(`https://nivekastore.onrender.com/items?category=${name}`)
       .then((res) => setItems(res.data))
       .catch((err) => console.log(err));
   }, [name]);

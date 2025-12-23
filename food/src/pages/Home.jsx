@@ -20,7 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/items")
+      .get("https://nivekastore.onrender.com/items")
       .then((res) => setItems(res.data))
       .catch((err) => console.log(err));
   }, []);
