@@ -31,14 +31,14 @@ router.post("/", async (req, res) => {
     });
 
 
-    if (response.ok) {
-      res.status(200).json({ message: "Order placed and email sent", data });
+    if (response.status === 200 || response.status === 201) {
+      res.status(200).json({ message: "Order placed and email sent", data: response.data });
     } else {
-      console.error("Brevo API error:", data);
-      res.status(500).json({ message: "Error sending email", error: data });
+      console.error("Brevo API error:", response.data);
+      res.status(500).json({ message: "Error sending email", error: response.data });
     }
   } catch (err) {
-    console.error(err);
+    console.error("Email sending error:", err.response?.data || err.message);
     res.status(500).json({ message: "Error sending email" });
   }
 });
